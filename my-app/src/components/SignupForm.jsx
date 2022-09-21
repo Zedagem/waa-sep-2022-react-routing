@@ -1,7 +1,33 @@
 import TextField from "./TextField";
 import Button from "./Button";
 import Header from "./Header";
+import { useState } from "react";
+import { instance } from "../index";
+import { useNavigate } from "react-router-dom";
+
 export default function (props) {
+  const [firstNameState,setFirstNameState] = useState("");
+  const [emailState,setEmailState] = useState("");
+  const [passwordState, setPasswordState] = useState("");
+  const navigator = useNavigate();
+
+  function onSignup(){
+    instance.post('/uaa/signup',{
+      email:emailState,
+      password:passwordState,
+      firstname:firstNameState,
+      roles:[
+        {
+           role:"USER"
+        }
+        ]
+    }).then(response => {
+      console.log("success signup ");
+      navigator('/')
+    })
+    .catch(err => console.log(err))
+  }
+
   return (
     <div className="w-50 mt-5 mx-auto">
       <Header {...{ text: "Please Sign Up" }} />
@@ -12,7 +38,7 @@ export default function (props) {
           text: "First Name",
           id: "firstName",
           placeholder: "John",
-          onTyped: props.onFirstName
+          onTyped:setFirstNameState
         }}
       />
       <br />
@@ -23,7 +49,7 @@ export default function (props) {
           text: "Email Address",
           id: "signupEmail",
           placeholder: "name@example.com",
-          onTyped: props.onEmail
+          onTyped:setEmailState
         }}
       />
       <br />
@@ -34,7 +60,7 @@ export default function (props) {
           text: "Password",
           id: "signupPassword",
           placeholder: "Password",
-          onTyped: props.onPassword
+          onTyped:setPasswordState
         }}
       />
       <br />
@@ -42,7 +68,7 @@ export default function (props) {
           {...{
             text: "Sign up",
             classname: "w-100 btn btn-lg btn-primary mt-3",
-            onclick:props.onclick
+            onclick:onSignup
           }}
         />
     </div>
